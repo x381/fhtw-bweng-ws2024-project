@@ -1,6 +1,7 @@
 package at.fhtw.bweng_ws24.controller;
 
-import at.fhtw.bweng_ws24.dto.ProductDto;
+import at.fhtw.bweng_ws24.dto.CreateProductDto;
+import at.fhtw.bweng_ws24.dto.UpdateProductDto;
 import at.fhtw.bweng_ws24.model.Product;
 import at.fhtw.bweng_ws24.service.ProductService;
 import jakarta.validation.Valid;
@@ -32,10 +33,26 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductDto product) {
+    public ResponseEntity<Product> createProduct(@RequestBody @Valid CreateProductDto product) {
         UUID uuid = productService.createProduct(product);
         return ResponseEntity
                 .created(URI.create("/products/" + uuid))
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable UUID id, @RequestBody @Valid UpdateProductDto product) {
+        productService.updateProduct(id, product);
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Product> deleteProduct(@PathVariable UUID id) {
+        productService.deleteProduct(id);
+        return ResponseEntity
+                .noContent()
                 .build();
     }
 }

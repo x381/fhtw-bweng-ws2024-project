@@ -1,9 +1,9 @@
 package at.fhtw.bweng_ws24.service;
 
-import at.fhtw.bweng_ws24.dto.ProductDto;
+import at.fhtw.bweng_ws24.dto.CreateProductDto;
+import at.fhtw.bweng_ws24.dto.UpdateProductDto;
 import at.fhtw.bweng_ws24.model.Product;
 import at.fhtw.bweng_ws24.repository.ProductRepository;
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,11 +29,34 @@ public class ProductService {
         );
     }
 
-    public UUID createProduct(@Valid ProductDto product) {
+    public UUID createProduct(CreateProductDto product) {
         Product newProduct = new Product();
         newProduct.setName(product.getName());
-        newProduct.setPrice(product.getPrice());
+//        newProduct.setImageUrl(product.getImageUrl());
+        newProduct.setCategory(product.getCategory());
         newProduct.setDescription(product.getDescription());
+        newProduct.setCreatedBy(UUID.fromString(product.getCreatedBy()));
+        newProduct.setLastUpdatedBy(UUID.fromString(product.getCreatedBy()));
+        newProduct.setStock(product.getStock());
+        newProduct.setPrice(product.getPrice());
         return productRepository.save(newProduct).getId();
+    }
+
+    public void updateProduct(UUID id, UpdateProductDto product) {
+        Product existingProduct = productRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("Product with id " + id + " not found.")
+        );
+        existingProduct.setName(product.getName());
+//        existingProduct.setImageUrl(product.getImageUrl());
+        existingProduct.setCategory(product.getCategory());
+        existingProduct.setDescription(product.getDescription());
+        existingProduct.setLastUpdatedBy(UUID.fromString(product.getLastUpdatedBy()));
+        existingProduct.setStock(product.getStock());
+        existingProduct.setPrice(product.getPrice());
+        productRepository.save(existingProduct);
+    }
+
+    public void deleteProduct(UUID id) {
+        productRepository.deleteById(id);
     }
 }
