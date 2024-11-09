@@ -50,6 +50,7 @@ public class User {
 
     private String image;
 
+    @Column(columnDefinition = "boolean default true")
     private boolean enabled;
 
     private UUID lastUpdatedBy;

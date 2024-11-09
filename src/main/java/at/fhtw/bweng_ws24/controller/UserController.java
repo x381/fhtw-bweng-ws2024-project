@@ -1,6 +1,7 @@
 package at.fhtw.bweng_ws24.controller;
 
-import at.fhtw.bweng_ws24.dto.CreateUserDto;
+import at.fhtw.bweng_ws24.dto.PostUserDto;
+import at.fhtw.bweng_ws24.dto.PutUserDto;
 import at.fhtw.bweng_ws24.model.User;
 import at.fhtw.bweng_ws24.service.UserService;
 import jakarta.validation.Valid;
@@ -31,10 +32,18 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<User> createUser(@RequestBody @Valid CreateUserDto user) {
+    public ResponseEntity<User> createUser(@RequestBody @Valid PostUserDto user) {
         UUID uuid = userService.createUser(user);
         return ResponseEntity
                 .created(java.net.URI.create("/users/" + uuid))
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable UUID id, @RequestBody @Valid PutUserDto user) {
+        userService.updateUser(id, user);
+        return ResponseEntity
+                .noContent()
                 .build();
     }
 }
