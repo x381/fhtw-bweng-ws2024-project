@@ -1,7 +1,7 @@
 package at.fhtw.bweng_ws24.service;
 
-import at.fhtw.bweng_ws24.dto.CreateProductDto;
-import at.fhtw.bweng_ws24.dto.UpdateProductDto;
+import at.fhtw.bweng_ws24.dto.PostProductDto;
+import at.fhtw.bweng_ws24.dto.PutProductDto;
 import at.fhtw.bweng_ws24.model.Product;
 import at.fhtw.bweng_ws24.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class ProductService {
         );
     }
 
-    public UUID createProduct(CreateProductDto product) {
+    public UUID createProduct(PostProductDto product) {
         Product newProduct = new Product();
         newProduct.setName(product.getName());
 //        newProduct.setImageUrl(product.getImageUrl());
@@ -42,7 +42,7 @@ public class ProductService {
         return productRepository.save(newProduct).getId();
     }
 
-    public void updateProduct(UUID id, UpdateProductDto product) {
+    public void updateProduct(UUID id, PutProductDto product) {
         Product existingProduct = productRepository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("Product with id " + id + " not found.")
         );
