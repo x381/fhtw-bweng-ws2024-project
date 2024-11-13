@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -33,19 +35,24 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody @Valid PostProductDto product) {
-        UUID uuid = productService.createProduct(product);
+    public ResponseEntity<?> createProduct(@RequestBody @Valid PostProductDto product) {
+        UUID productId = productService.createProduct(product);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Product created successfully");
+        response.put("productId", productId);
         return ResponseEntity
-                .created(URI.create("/products/" + uuid))
-                .build();
+                .created(URI.create("/products/" + productId))
+                .body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable UUID id, @RequestBody @Valid PutProductDto product) {
+    public ResponseEntity<?> updateProduct(@PathVariable UUID id, @RequestBody @Valid PutProductDto product) {
         productService.updateProduct(id, product);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Product updated successfully");
         return ResponseEntity
-                .noContent()
-                .build();
+                .ok()
+                .body(response);
     }
 
     @DeleteMapping("/{id}")

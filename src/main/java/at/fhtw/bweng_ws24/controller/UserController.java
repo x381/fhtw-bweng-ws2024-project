@@ -8,7 +8,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -32,18 +34,21 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<User> createUser(@RequestBody @Valid PostUserDto user) {
-        UUID uuid = userService.createUser(user);
+    public ResponseEntity<?> createUser(@RequestBody @Valid PostUserDto user) {
+        UUID userId = userService.createUser(user);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "User created successfully");
+        response.put("userId", userId);
         return ResponseEntity
-                .created(java.net.URI.create("/users/" + uuid))
-                .build();
+                .created(java.net.URI.create("/users/" + userId))
+                .body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable UUID id, @RequestBody @Valid PutUserDto user) {
+    public ResponseEntity<?> updateUser(@PathVariable UUID id, @RequestBody @Valid PutUserDto user) {
         userService.updateUser(id, user);
-        return ResponseEntity
-                .noContent()
-                .build();
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "User updated successfully");
+        return ResponseEntity.ok(response);
     }
 }

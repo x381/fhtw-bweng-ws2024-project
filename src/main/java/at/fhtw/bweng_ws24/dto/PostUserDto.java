@@ -26,7 +26,7 @@ public class PostUserDto {
     @NotBlank(message = "Email is mandatory")
     private String email;
 
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,}$", message = "Password must contain at least one digit, one lowercase letter, one uppercase letter, no whitespace, and at least 8 characters")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{12,}$", message = "Password must contain at least one digit, one lowercase letter, one uppercase letter, one symbol, no whitespace, and at least 12 characters")
     @NotBlank(message = "Password is mandatory")
     private String password;
 
