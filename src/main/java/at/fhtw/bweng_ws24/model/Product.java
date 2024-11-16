@@ -33,7 +33,7 @@ public class Product {
 
     private UUID lastUpdatedBy;
 
-    private int stock;
+    private int stock = 0;
 
     private double price;
 

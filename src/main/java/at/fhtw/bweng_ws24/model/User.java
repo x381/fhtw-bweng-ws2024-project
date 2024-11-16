@@ -36,7 +36,7 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private UserRole userRole;
+    private UserRole userRole = UserRole.USER;
 
     private String country;
 
@@ -50,8 +50,7 @@ public class User {
 
     private String image;
 
-    @Column(columnDefinition = "boolean default true")
-    private boolean enabled;
+    private boolean enabled = true;
 
     private UUID lastUpdatedBy;
 

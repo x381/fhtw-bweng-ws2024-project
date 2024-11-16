@@ -37,7 +37,6 @@ public class ProductService {
         newProduct.setDescription(product.getDescription());
         newProduct.setCreatedBy(UUID.fromString(product.getCreatedBy()));
         newProduct.setLastUpdatedBy(UUID.fromString(product.getCreatedBy()));
-        newProduct.setStock(product.getStock());
         newProduct.setPrice(product.getPrice());
         return productRepository.save(newProduct).getId();
     }
@@ -51,7 +50,6 @@ public class ProductService {
         existingProduct.setCategory(product.getCategory());
         existingProduct.setDescription(product.getDescription());
         existingProduct.setLastUpdatedBy(UUID.fromString(product.getLastUpdatedBy()));
-        existingProduct.setStock(product.getStock());
         existingProduct.setPrice(product.getPrice());
         productRepository.save(existingProduct);
     }

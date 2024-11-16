@@ -2,6 +2,8 @@ package at.fhtw.bweng_ws24.service;
 
 import at.fhtw.bweng_ws24.dto.PostUserDto;
 import at.fhtw.bweng_ws24.dto.PutUserDto;
+import at.fhtw.bweng_ws24.dto.UserResponseDto;
+import at.fhtw.bweng_ws24.mapper.UserMapper;
 import at.fhtw.bweng_ws24.model.User;
 import at.fhtw.bweng_ws24.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -14,19 +16,24 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public List<UserResponseDto> getUsers() {
+        return this.userRepository
+                .findAll().stream()
+                .map(userMapper::toUserResponseDto)
+                .toList();
     }
 
-    public User getUser(UUID id) {
-        return userRepository.findById(id).orElseThrow(
+    public UserResponseDto getUser(UUID id) {
+        return userMapper.toUserResponseDto(userRepository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("User with id " + id + " not found.")
-        );
+        ));
     }
 
     public UUID createUser(PostUserDto user) {
@@ -36,7 +43,6 @@ public class UserService {
         newUser.setOtherSpecify(user.getOtherSpecify());
         newUser.setEmail(user.getEmail());
         newUser.setPassword(user.getPassword());
-        newUser.setEnabled(true);
         newUser.setCountry(user.getCountry());
         UUID uuid = userRepository.save(newUser).getId();
         newUser.setLastUpdatedBy(uuid);

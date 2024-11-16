@@ -2,7 +2,7 @@ package at.fhtw.bweng_ws24.controller;
 
 import at.fhtw.bweng_ws24.dto.PostUserDto;
 import at.fhtw.bweng_ws24.dto.PutUserDto;
-import at.fhtw.bweng_ws24.model.User;
+import at.fhtw.bweng_ws24.dto.UserResponseDto;
 import at.fhtw.bweng_ws24.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +24,12 @@ public class UserController {
     }
 
     @GetMapping()
-    public List<User> getUsers() {
+    public List<UserResponseDto> getUsers() {
         return userService.getUsers();
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable UUID id) {
+    public UserResponseDto getUser(@PathVariable UUID id) {
         return userService.getUser(id);
     }
 

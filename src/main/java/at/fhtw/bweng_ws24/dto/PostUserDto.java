@@ -16,7 +16,7 @@ public class PostUserDto {
     @Size(max = 30, message = "Other specify must be less than 30 characters")
     private String otherSpecify;
 
-    @AssertTrue(message = "Other specify is mandatory if userGender is OTHER")
+    @AssertTrue(message = "Other specify is mandatory only if userGender is OTHER")
     public boolean isOtherSpecifyValid() {
         return (userGender == UserGender.OTHER && otherSpecify != null && !otherSpecify.isBlank())
                 || (userGender != UserGender.OTHER && otherSpecify == null);
@@ -26,7 +26,7 @@ public class PostUserDto {
     @NotBlank(message = "Email is mandatory")
     private String email;
 
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{12,}$", message = "Password must contain at least one digit, one lowercase letter, one uppercase letter, one symbol, no whitespace, and at least 12 characters")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!.])(?=\\S+$).{12,}$", message = "Password must contain at least one digit, one lowercase letter, one uppercase letter, one symbol, no whitespace, and at least 12 characters")
     @NotBlank(message = "Password is mandatory")
     private String password;
 
