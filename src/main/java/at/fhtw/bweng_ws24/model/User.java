@@ -20,6 +20,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(nullable = false, unique = true)
     private String username;
 
     private String firstName;
@@ -33,10 +34,11 @@ public class User {
 
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private UserRole userRole = UserRole.USER;
+    @Column(nullable = false)
+    private String role = "USER";
 
     private String country;
 

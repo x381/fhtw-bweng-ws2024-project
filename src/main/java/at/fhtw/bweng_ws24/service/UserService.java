@@ -70,4 +70,9 @@ public class UserService {
         updatedUser.setLastUpdatedBy(UUID.fromString(user.getLastUpdatedBy()));
         userRepository.save(updatedUser);
     }
+
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+
 }
