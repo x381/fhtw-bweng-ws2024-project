@@ -32,10 +32,6 @@ public class PutUserDto {
     @NotBlank(message = "Email is mandatory")
     private String email;
 
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{12,}$", message = "Password must contain at least one digit, one lowercase letter, one uppercase letter, one symbol, no whitespace, and at least 12 characters")
-    @NotBlank(message = "Password is mandatory")
-    private String password;
-
     @NotBlank(message = "Country is mandatory")
     @Size(min = 3, max = 30, message = "Country must be between 3 and 30 characters")
     private String country;

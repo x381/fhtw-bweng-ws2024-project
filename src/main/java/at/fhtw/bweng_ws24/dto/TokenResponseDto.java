@@ -11,4 +11,6 @@ public class TokenResponseDto {
 
     private String token;
 
+    private UserResponseDto user;
+
 }

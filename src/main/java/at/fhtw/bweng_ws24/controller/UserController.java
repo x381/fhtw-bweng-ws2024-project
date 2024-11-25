@@ -6,6 +6,7 @@ import at.fhtw.bweng_ws24.dto.UserResponseDto;
 import at.fhtw.bweng_ws24.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -46,6 +47,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'update')")
     public ResponseEntity<?> updateUser(@PathVariable UUID id, @RequestBody @Valid PutUserDto user) {
         userService.updateUser(id, user);
         Map<String, Object> response = new HashMap<>();

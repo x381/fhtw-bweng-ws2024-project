@@ -7,7 +7,7 @@ import lombok.Data;
 public class TokenRequestDto {
 
     @NotBlank
-    private String username;
+    private String usernameOrEmail;
 
     @NotBlank
     private String password;

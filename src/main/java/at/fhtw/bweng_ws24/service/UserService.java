@@ -67,21 +67,23 @@ public class UserService {
         User updatedUser = userRepository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("User with id " + id + " not found.")
         );
-        if (emailExist(user.getEmail())) {
+
+        if (emailExist(user.getEmail()) && !updatedUser.getEmail().equals(user.getEmail())) {
             throw new EmailExistsException(
                     "There is an account with that email adress:" + user.getEmail());
         }
-        if (usernameExist(user.getUsername())) {
+
+        if (usernameExist(user.getUsername()) && !updatedUser.getUsername().equals(user.getUsername())) {
             throw new UsernameExistsException(
                     "There is an account with that username:" + user.getUsername());
         }
+
         updatedUser.setUsername(user.getUsername());
         updatedUser.setFirstName(user.getFirstName());
         updatedUser.setLastName(user.getLastName());
         updatedUser.setUserGender(user.getUserGender());
         updatedUser.setOtherSpecify(user.getOtherSpecify());
         updatedUser.setEmail(user.getEmail());
-        updatedUser.setPassword(passwordEncoder.encode(user.getPassword()));
         updatedUser.setCountry(user.getCountry());
         updatedUser.setCity(user.getCity());
         updatedUser.setStreet(user.getStreet());
@@ -94,6 +96,10 @@ public class UserService {
 
     public User findUserByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    public User findByUsernameOrEmail(String username, String email) {
+        return userRepository.findByUsernameOrEmail(username, email);
     }
 
     public boolean emailExist(String email) {
