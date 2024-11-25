@@ -1,5 +1,7 @@
 package at.fhtw.bweng_ws24.config;
 
+import at.fhtw.bweng_ws24.exception.EmailExistsException;
+import at.fhtw.bweng_ws24.exception.UsernameExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -41,6 +43,13 @@ public class ExceptionHandling {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<?> handleHttpMessageNotReadableException(
             HttpMessageNotReadableException e, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(new Date(), request.getDescription(false));
+        errorDetails.addMessage("errors", e.getMessage());
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({EmailExistsException.class, UsernameExistsException.class})
+    public ResponseEntity<?> handleConflict(Exception e, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), request.getDescription(false));
         errorDetails.addMessage("errors", e.getMessage());
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);

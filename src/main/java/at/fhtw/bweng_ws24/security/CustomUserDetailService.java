@@ -3,6 +3,7 @@ package at.fhtw.bweng_ws24.security;
 import at.fhtw.bweng_ws24.model.User;
 import at.fhtw.bweng_ws24.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,7 +14,7 @@ public class CustomUserDetailService implements UserDetailsService {
 
     private final UserService userService;
 
-    public CustomUserDetailService(UserService userService) {
+    public CustomUserDetailService(@Lazy UserService userService) {
         this.userService = userService;
     }
 

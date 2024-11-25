@@ -32,6 +32,7 @@ public class User {
 
     private String otherSpecify;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
