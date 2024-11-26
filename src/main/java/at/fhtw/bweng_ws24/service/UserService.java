@@ -2,12 +2,14 @@ package at.fhtw.bweng_ws24.service;
 
 import at.fhtw.bweng_ws24.dto.PostUserDto;
 import at.fhtw.bweng_ws24.dto.PutUserDto;
+import at.fhtw.bweng_ws24.dto.PutUserPasswordDto;
 import at.fhtw.bweng_ws24.dto.UserResponseDto;
 import at.fhtw.bweng_ws24.exception.EmailExistsException;
 import at.fhtw.bweng_ws24.exception.UsernameExistsException;
 import at.fhtw.bweng_ws24.mapper.UserMapper;
 import at.fhtw.bweng_ws24.model.User;
 import at.fhtw.bweng_ws24.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class UserService {
 
@@ -108,5 +111,19 @@ public class UserService {
 
     public boolean usernameExist(String username) {
         return userRepository.findByUsername(username) != null;
+    }
+
+    public void updateUserPassword(UUID id, PutUserPasswordDto password) {
+        User updatedUser = userRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("User with id " + id + " not found.")
+        );
+
+        if (!passwordEncoder.matches(password.getActualPassword(), updatedUser.getPassword())) {
+            throw new IllegalArgumentException("Actual password is incorrect");
+        }
+
+        updatedUser.setPassword(passwordEncoder.encode(password.getNewPassword()));
+        updatedUser.setLastUpdatedBy(UUID.fromString(password.getLastUpdatedBy()));
+        userRepository.save(updatedUser);
     }
 }

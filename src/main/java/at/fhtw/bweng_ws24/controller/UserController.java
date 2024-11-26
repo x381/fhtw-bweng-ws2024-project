@@ -2,6 +2,7 @@ package at.fhtw.bweng_ws24.controller;
 
 import at.fhtw.bweng_ws24.dto.PostUserDto;
 import at.fhtw.bweng_ws24.dto.PutUserDto;
+import at.fhtw.bweng_ws24.dto.PutUserPasswordDto;
 import at.fhtw.bweng_ws24.dto.UserResponseDto;
 import at.fhtw.bweng_ws24.service.UserService;
 import jakarta.validation.Valid;
@@ -52,6 +53,15 @@ public class UserController {
         userService.updateUser(id, user);
         Map<String, Object> response = new HashMap<>();
         response.put("message", "User updated successfully");
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}/password")
+    @PreAuthorize("hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'update')")
+    public ResponseEntity<?> updateUserPassword(@PathVariable UUID id, @RequestBody @Valid PutUserPasswordDto password) {
+        userService.updateUserPassword(id, password);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "User password updated successfully");
         return ResponseEntity.ok(response);
     }
 }
