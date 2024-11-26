@@ -50,7 +50,7 @@ public class ExceptionHandling {
     }
 
     @ExceptionHandler({EmailExistsException.class, UsernameExistsException.class, PasswordWrongException.class})
-    public ResponseEntity<?> handleConflict(Exception e, WebRequest request) {
+    public ResponseEntity<?> handleCustomExceptions(Exception e, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), request.getDescription(false));
         errorDetails.addMessage("errors", e.getMessage());
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
