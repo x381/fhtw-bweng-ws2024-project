@@ -33,6 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'read')")
     public UserResponseDto getUser(@PathVariable UUID id) {
         return userService.getUser(id);
     }
@@ -49,11 +50,20 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'update')")
+    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'update')")
     public ResponseEntity<?> updateUser(@PathVariable UUID id, @RequestBody @Valid PutUserDto user) {
         userService.updateUser(id, user);
         Map<String, Object> response = new HashMap<>();
         response.put("message", "User updated successfully");
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'delete')")
+    public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
+        userService.deleteUser(id);
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "User deleted successfully");
         return ResponseEntity.ok(response);
     }
 

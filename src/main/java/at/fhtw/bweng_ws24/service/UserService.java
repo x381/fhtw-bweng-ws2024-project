@@ -127,4 +127,8 @@ public class UserService {
         updatedUser.setLastUpdatedBy(UUID.fromString(password.getLastUpdatedBy()));
         userRepository.save(updatedUser);
     }
+
+    public void deleteUser(UUID id) {
+        userRepository.deleteById(id);
+    }
 }

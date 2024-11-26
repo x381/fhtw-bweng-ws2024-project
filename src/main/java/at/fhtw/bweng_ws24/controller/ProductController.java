@@ -7,6 +7,7 @@ import at.fhtw.bweng_ws24.model.ProductCategory;
 import at.fhtw.bweng_ws24.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -53,6 +54,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.Product', 'update')")
     public ResponseEntity<?> updateProduct(@PathVariable UUID id, @RequestBody @Valid PutProductDto product) {
         productService.updateProduct(id, product);
         Map<String, Object> response = new HashMap<>();
@@ -63,6 +65,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.Product', 'delete')")
     public ResponseEntity<Product> deleteProduct(@PathVariable UUID id) {
         productService.deleteProduct(id);
         return ResponseEntity
