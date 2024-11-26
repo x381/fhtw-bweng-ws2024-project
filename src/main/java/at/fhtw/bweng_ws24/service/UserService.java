@@ -5,6 +5,7 @@ import at.fhtw.bweng_ws24.dto.PutUserDto;
 import at.fhtw.bweng_ws24.dto.PutUserPasswordDto;
 import at.fhtw.bweng_ws24.dto.UserResponseDto;
 import at.fhtw.bweng_ws24.exception.EmailExistsException;
+import at.fhtw.bweng_ws24.exception.PasswordWrongException;
 import at.fhtw.bweng_ws24.exception.UsernameExistsException;
 import at.fhtw.bweng_ws24.mapper.UserMapper;
 import at.fhtw.bweng_ws24.model.User;
@@ -119,7 +120,7 @@ public class UserService {
         );
 
         if (!passwordEncoder.matches(password.getActualPassword(), updatedUser.getPassword())) {
-            throw new IllegalArgumentException("Actual password is incorrect");
+            throw new PasswordWrongException("The actual password is wrong.");
         }
 
         updatedUser.setPassword(passwordEncoder.encode(password.getNewPassword()));
