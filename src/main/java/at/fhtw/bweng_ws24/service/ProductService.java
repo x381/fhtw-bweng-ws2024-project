@@ -3,6 +3,7 @@ package at.fhtw.bweng_ws24.service;
 import at.fhtw.bweng_ws24.dto.PostProductDto;
 import at.fhtw.bweng_ws24.dto.PutProductDto;
 import at.fhtw.bweng_ws24.model.Product;
+import at.fhtw.bweng_ws24.model.ProductCategory;
 import at.fhtw.bweng_ws24.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
@@ -56,5 +57,9 @@ public class ProductService {
 
     public void deleteProduct(UUID id) {
         productRepository.deleteById(id);
+    }
+
+    public List<Product> getProductsByCategory(ProductCategory category) {
+        return productRepository.findByCategory(category);
     }
 }

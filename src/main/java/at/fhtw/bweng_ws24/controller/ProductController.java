@@ -3,6 +3,7 @@ package at.fhtw.bweng_ws24.controller;
 import at.fhtw.bweng_ws24.dto.PostProductDto;
 import at.fhtw.bweng_ws24.dto.PutProductDto;
 import at.fhtw.bweng_ws24.model.Product;
+import at.fhtw.bweng_ws24.model.ProductCategory;
 import at.fhtw.bweng_ws24.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,11 @@ public class ProductController {
     @GetMapping
     public List<Product> getProducts() {
         return productService.getProducts();
+    }
+
+    @GetMapping(params = {"category"})
+    public List<Product> getProductsByCategory(@RequestParam ProductCategory category) {
+        return productService.getProductsByCategory(category);
     }
 
     @GetMapping("/{id}")
