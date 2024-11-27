@@ -43,6 +43,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<?> createProduct(@RequestBody @Valid PostProductDto product) {
         UUID productId = productService.createProduct(product);
         Map<String, Object> response = new HashMap<>();
