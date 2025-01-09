@@ -41,6 +41,6 @@ public class AuthService {
 
         String token = tokenIssuer.issue(userPrincipal.getId(), userPrincipal.getUsername(), userPrincipal.getRole());
 
-        return new TokenResponseDto(token, userService.getUser(userPrincipal.getId()));
+        return new TokenResponseDto(token);
     }
 }
