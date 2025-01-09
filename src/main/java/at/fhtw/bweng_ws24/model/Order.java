@@ -7,29 +7,36 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "orders")
 public class Order {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private String user_id;
+    @Column(nullable = false)
+    private String customerName;
 
     @Column(nullable = false)
-    private String products_id;
+    private String customerEmail;
 
-    private String products_quantity;
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false)
+    private Float totalAmount;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_id") // Foreign key reference to orders table
+    private List<OrderItem> orderItems;
 
     @CreationTimestamp
     private Instant createdAt;
-
-    private Float total_price;
-
-
 }
