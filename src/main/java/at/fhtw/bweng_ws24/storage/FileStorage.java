@@ -9,4 +9,5 @@ import java.io.InputStream;
 public interface FileStorage {
     String upload(MultipartFile file);
     InputStream download(String id);
+    void delete(String id);
 }

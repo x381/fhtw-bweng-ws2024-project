@@ -41,6 +41,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/users").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/auth/token").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/images/**").permitAll()
                                 // swagger
                                 .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()

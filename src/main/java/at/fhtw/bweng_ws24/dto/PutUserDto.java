@@ -48,8 +48,6 @@ public class PutUserDto {
     @Pattern(regexp = "^(\\+\\d{1,3}[- ]?)?\\d{10}$", message = "Invalid phone number")
     private String phone;
 
-    private String image;
-
     @UUID(message = "Invalid UUID")
     @NotBlank(message = "Last updated by is mandatory")
     private String lastUpdatedBy;

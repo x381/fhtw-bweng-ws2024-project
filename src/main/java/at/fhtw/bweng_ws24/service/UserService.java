@@ -39,10 +39,20 @@ public class UserService {
                 .toList();
     }
 
-    public UserResponseDto getUser(UUID id) {
+    public UserResponseDto getUserResponseDto(UUID id) {
         return userMapper.toUserResponseDto(userRepository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("User with id " + id + " not found.")
         ));
+    }
+
+    public User getUser(UUID id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("User with id " + id + " not found.")
+        );
+    }
+
+    public void saveUser(User user) {
+        userRepository.save(user);
     }
 
     public UUID createUser(PostUserDto user) throws EmailExistsException {
@@ -93,7 +103,6 @@ public class UserService {
         updatedUser.setStreet(user.getStreet());
         updatedUser.setZip(user.getZip());
         updatedUser.setPhone(user.getPhone());
-        updatedUser.setImage(user.getImage());
         updatedUser.setLastUpdatedBy(UUID.fromString(user.getLastUpdatedBy()));
         userRepository.save(updatedUser);
     }

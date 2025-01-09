@@ -6,11 +6,13 @@ import at.fhtw.bweng_ws24.service.ResourceImageService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/images")
 public class ResourceImageController {
@@ -21,9 +23,10 @@ public class ResourceImageController {
         this.resourceImageService = resourceImageService;
     }
 
-    @PostMapping("")
-    public ResourceImageDto upload(@RequestParam("file") MultipartFile file) {
-        return resourceImageService.upload(file);
+    @PostMapping("/profile-picture/{userId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'update')")
+    public ResourceImageDto uploadProfilePicture(@PathVariable("userId") UUID userId, @RequestParam("file") MultipartFile file) {
+        return resourceImageService.upload(userId, file);
     }
 
     @GetMapping("/{id}")
