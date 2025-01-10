@@ -24,13 +24,13 @@ public class ResourceImageController {
     }
 
     @PostMapping("/profile-picture/{userId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'update')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'update'))")
     public ResourceImageDto uploadProfilePicture(@PathVariable("userId") UUID userId, @RequestParam("file") MultipartFile file) {
         return resourceImageService.upload(userId, file);
     }
 
     @DeleteMapping("/profile-picture/{userId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'delete')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'delete'))")
     public ResponseEntity<?> delete(@PathVariable("userId") UUID userId) {
         resourceImageService.deleteProfilePicture(userId);
         return ResponseEntity.noContent().build();

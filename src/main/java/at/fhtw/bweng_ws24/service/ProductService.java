@@ -33,7 +33,6 @@ public class ProductService {
     public UUID createProduct(PostProductDto product) {
         Product newProduct = new Product();
         newProduct.setName(product.getName());
-//        newProduct.setImageUrl(product.getImageUrl());
         newProduct.setCategory(product.getCategory());
         newProduct.setDescription(product.getDescription());
         newProduct.setCreatedBy(UUID.fromString(product.getCreatedBy()));
@@ -47,12 +46,15 @@ public class ProductService {
                 () -> new NoSuchElementException("Product with id " + id + " not found.")
         );
         existingProduct.setName(product.getName());
-//        existingProduct.setImageUrl(product.getImageUrl());
         existingProduct.setCategory(product.getCategory());
         existingProduct.setDescription(product.getDescription());
         existingProduct.setLastUpdatedBy(UUID.fromString(product.getLastUpdatedBy()));
         existingProduct.setPrice(product.getPrice());
         productRepository.save(existingProduct);
+    }
+
+    public List<Product> getProductsByCreatedBy(UUID createdBy) {
+        return productRepository.findByCreatedBy(createdBy);
     }
 
     public void deleteProduct(UUID id) {
