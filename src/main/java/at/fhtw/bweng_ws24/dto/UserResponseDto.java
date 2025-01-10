@@ -3,6 +3,7 @@ package at.fhtw.bweng_ws24.dto;
 import at.fhtw.bweng_ws24.model.UserGender;
 import lombok.Data;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Data
@@ -21,4 +22,5 @@ public class UserResponseDto {
     private String phone;
     private String image;
     private String role;
+    private Instant createdAt;
 }
