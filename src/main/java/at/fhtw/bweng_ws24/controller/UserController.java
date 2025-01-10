@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'read'))")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'read'))")
     public UserResponseDto getUser(@PathVariable UUID id) {
         return userService.getUserResponseDto(id);
     }
