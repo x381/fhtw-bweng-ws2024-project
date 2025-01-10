@@ -2,6 +2,7 @@ package at.fhtw.bweng_ws24.service;
 
 import at.fhtw.bweng_ws24.dto.ResourceImageDto;
 import at.fhtw.bweng_ws24.mapper.ResourceImageMapper;
+import at.fhtw.bweng_ws24.model.Product;
 import at.fhtw.bweng_ws24.model.ResourceImage;
 import at.fhtw.bweng_ws24.model.User;
 import at.fhtw.bweng_ws24.repository.ResourceImageRepository;
@@ -22,19 +23,21 @@ public class ResourceImageService {
     private final FileStorage fileStorage;
     private final ResourceImageMapper resourceImageMapper;
     private final UserService userService;
+    private final ProductService productService;
 
-    public ResourceImageService(ResourceImageRepository resourceImageRepository, FileStorage fileStorage, ResourceImageMapper resourceImageMapper, UserService userService) {
+    public ResourceImageService(ResourceImageRepository resourceImageRepository, FileStorage fileStorage, ResourceImageMapper resourceImageMapper, UserService userService, ProductService productService) {
         this.resourceImageRepository = resourceImageRepository;
         this.fileStorage = fileStorage;
         this.resourceImageMapper = resourceImageMapper;
         this.userService = userService;
+        this.productService = productService;
     }
 
     public ResourceImage save(ResourceImage resourceImage) {
         return resourceImageRepository.save(resourceImage);
     }
 
-    public ResourceImageDto upload(UUID userId, MultipartFile file) {
+    public ResourceImageDto uploadProfilePicture(UUID userId, MultipartFile file) {
         User user = userService.getUser(userId);
         if (user.getImage() != null) {
             ResourceImage resourceImage = findById(UUID.fromString(user.getImage()));
@@ -56,6 +59,28 @@ public class ResourceImageService {
         return resourceImageDto;
     }
 
+    public ResourceImageDto uploadProductPicture(UUID productId, MultipartFile file) {
+        Product product = productService.getProduct(productId);
+        if (product.getImage() != null) {
+            ResourceImage resourceImage = findById(UUID.fromString(product.getImage()));
+            fileStorage.delete(resourceImage.getExternalId());
+            resourceImageRepository.delete(resourceImage);
+        }
+
+        String externalId = fileStorage.upload(file);
+
+        ResourceImage resourceImage = new ResourceImage();
+        resourceImage.setExternalId(externalId);
+        resourceImage.setContentType(file.getContentType());
+        resourceImage.setName(file.getOriginalFilename());
+
+        ResourceImageDto resourceImageDto = resourceImageMapper.toDto(resourceImageRepository.save(resourceImage));
+
+        product.setImage(resourceImageDto.getId().toString());
+        productService.saveProduct(product);
+        return resourceImageDto;
+    }
+
     public void deleteProfilePicture(UUID userId) {
         User user = userService.getUser(userId);
         if (user.getImage() != null) {
@@ -64,6 +89,17 @@ public class ResourceImageService {
             resourceImageRepository.delete(resourceImage);
             user.setImage(null);
             userService.saveUser(user);
+        }
+    }
+
+    public void deleteProductPicture(UUID productId) {
+        Product product = productService.getProduct(productId);
+        if (product.getImage() != null) {
+            ResourceImage resourceImage = findById(UUID.fromString(product.getImage()));
+            fileStorage.delete(resourceImage.getExternalId());
+            resourceImageRepository.delete(resourceImage);
+            product.setImage(null);
+            productService.saveProduct(product);
         }
     }
 

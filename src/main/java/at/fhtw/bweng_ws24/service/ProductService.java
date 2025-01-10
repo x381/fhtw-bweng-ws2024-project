@@ -53,6 +53,10 @@ public class ProductService {
         productRepository.save(existingProduct);
     }
 
+    public void saveProduct(Product product) {
+        productRepository.save(product);
+    }
+
     public List<Product> getProductsByCreatedBy(UUID createdBy) {
         return productRepository.findByCreatedBy(createdBy);
     }
