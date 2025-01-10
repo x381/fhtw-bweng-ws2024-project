@@ -24,26 +24,26 @@ public class ResourceImageController {
     }
 
     @PostMapping("/profile-picture/{userId}")
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'update'))")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#userId, 'at.fhtw.bweng_ws24.model.User', 'update'))")
     public ResourceImageDto uploadProfilePicture(@PathVariable("userId") UUID userId, @RequestParam("file") MultipartFile file) {
         return resourceImageService.uploadProfilePicture(userId, file);
     }
 
     @PostMapping("/product-picture/{productId}")
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#id, 'at.fhtw.bweng_ws24.model.Product', 'update'))")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#productId, 'at.fhtw.bweng_ws24.model.Product', 'update'))")
     public ResourceImageDto uploadProductPicture(@PathVariable("productId") UUID productId, @RequestParam("file") MultipartFile file) {
         return resourceImageService.uploadProductPicture(productId, file);
     }
 
     @DeleteMapping("/profile-picture/{userId}")
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'delete'))")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#userId, 'at.fhtw.bweng_ws24.model.User', 'delete'))")
     public ResponseEntity<?> deleteProfilePicture(@PathVariable("userId") UUID userId) {
         resourceImageService.deleteProfilePicture(userId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/product-picture/{productId}")
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#id, 'at.fhtw.bweng_ws24.model.Product', 'delete'))")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#productId, 'at.fhtw.bweng_ws24.model.Product', 'delete'))")
     public ResponseEntity<?> deleteProductPicture(@PathVariable("productId") UUID productId) {
         resourceImageService.deleteProductPicture(productId);
         return ResponseEntity.noContent().build();
