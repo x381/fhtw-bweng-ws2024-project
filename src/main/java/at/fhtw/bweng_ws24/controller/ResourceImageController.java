@@ -29,6 +29,13 @@ public class ResourceImageController {
         return resourceImageService.upload(userId, file);
     }
 
+    @DeleteMapping("/profile-picture/{userId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'delete')")
+    public ResponseEntity<?> delete(@PathVariable("userId") UUID userId) {
+        resourceImageService.deleteProfilePicture(userId);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Resource> retrieve(@PathVariable("id") UUID id) {
         ResourceImage resourceImage = resourceImageService.findById(id);
@@ -39,4 +46,6 @@ public class ResourceImageController {
                 .contentType(mediaType)
                 .body(resource);
     }
+
+
 }

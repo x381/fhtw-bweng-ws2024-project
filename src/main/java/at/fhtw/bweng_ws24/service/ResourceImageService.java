@@ -56,6 +56,17 @@ public class ResourceImageService {
         return resourceImageDto;
     }
 
+    public void deleteProfilePicture(UUID userId) {
+        User user = userService.getUser(userId);
+        if (user.getImage() != null) {
+            ResourceImage resourceImage = findById(UUID.fromString(user.getImage()));
+            fileStorage.delete(resourceImage.getExternalId());
+            resourceImageRepository.delete(resourceImage);
+            user.setImage(null);
+            userService.saveUser(user);
+        }
+    }
+
     public ResourceImage findById(UUID id) {
         return resourceImageRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
