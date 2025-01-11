@@ -12,4 +12,5 @@ import java.util.UUID;
 public interface ProductRepository extends CrudRepository<Product, UUID> {
     List<Product> findAll();
     List<Product> findByCategory(ProductCategory category);
+    List<Product> findByCreatedBy(UUID createdBy);
 }

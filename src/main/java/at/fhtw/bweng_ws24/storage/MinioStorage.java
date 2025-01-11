@@ -54,4 +54,18 @@ public class MinioStorage implements FileStorage {
             throw new FileException("Download failed for id=" + id, e);
         }
     }
+
+    @Override
+    public void delete(String id) {
+        try {
+            minioClient.removeObject(
+                    io.minio.RemoveObjectArgs.builder()
+                            .bucket(minioProperties.getBucket())
+                            .object(id)
+                            .build()
+            );
+        } catch (Exception e) {
+            throw new FileException("Delete failed for id=" + id, e);
+        }
+    }
 }

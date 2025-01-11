@@ -33,9 +33,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'read')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'read'))")
     public UserResponseDto getUser(@PathVariable UUID id) {
-        return userService.getUser(id);
+        return userService.getUserResponseDto(id);
     }
 
     @PostMapping()
@@ -50,7 +50,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'update')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'update'))")
     public ResponseEntity<?> updateUser(@PathVariable UUID id, @RequestBody @Valid PutUserDto user) {
         userService.updateUser(id, user);
         Map<String, Object> response = new HashMap<>();
@@ -59,7 +59,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'delete')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'delete'))")
     public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
         userService.deleteUser(id);
         Map<String, Object> response = new HashMap<>();
@@ -68,7 +68,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}/password")
-    @PreAuthorize("hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'update')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'delete'))")
     public ResponseEntity<?> updateUserPassword(@PathVariable UUID id, @RequestBody @Valid PutUserPasswordDto password) {
         userService.updateUserPassword(id, password);
         Map<String, Object> response = new HashMap<>();

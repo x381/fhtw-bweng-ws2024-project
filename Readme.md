@@ -6,6 +6,7 @@ This repository contains the backend implementation for **HAKart**, an online ma
 
 ## 🚀 Motivation
 
+
 **HAKart** serves as a Minimum Viable Product (MVP) designed for the **Clean Backend Competition**. It showcases:
 - **RESTful API design** with proper HTTP methods and status codes.
 - Seamless integration with a frontend from the Frontend Web Engineering course.

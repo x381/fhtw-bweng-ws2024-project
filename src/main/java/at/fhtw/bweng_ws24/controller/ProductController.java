@@ -37,6 +37,12 @@ public class ProductController {
         return productService.getProductsByCategory(category);
     }
 
+    @GetMapping(params = {"createdBy"})
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#createdBy, 'at.fhtw.bweng_ws24.model.User', 'read'))")
+    public List<Product> getProductsByCreatedBy(@RequestParam UUID createdBy) {
+        return productService.getProductsByCreatedBy(createdBy);
+    }
+
     @GetMapping("/{id}")
     public Product getProduct(@PathVariable UUID id) {
         return productService.getProduct(id);
@@ -55,7 +61,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.Product', 'update')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#id, 'at.fhtw.bweng_ws24.model.Product', 'update'))")
     public ResponseEntity<?> updateProduct(@PathVariable UUID id, @RequestBody @Valid PutProductDto product) {
         productService.updateProduct(id, product);
         Map<String, Object> response = new HashMap<>();
@@ -66,7 +72,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.Product', 'delete')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#id, 'at.fhtw.bweng_ws24.model.Product', 'delete'))")
     public ResponseEntity<Product> deleteProduct(@PathVariable UUID id) {
         productService.deleteProduct(id);
         return ResponseEntity
