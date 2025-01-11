@@ -15,9 +15,11 @@ import java.util.UUID;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ResourceImageService resourceImageService;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, ResourceImageService resourceImageService) {
         this.productRepository = productRepository;
+        this.resourceImageService = resourceImageService;
     }
 
     public List<Product> getProducts() {
@@ -62,6 +64,12 @@ public class ProductService {
     }
 
     public void deleteProduct(UUID id) {
+        Product product = productRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("Product with id " + id + " not found.")
+        );
+        if (product.getImage() != null) {
+            resourceImageService.deleteResourceImage(UUID.fromString(product.getImage()));
+        }
         productRepository.deleteById(id);
     }
 

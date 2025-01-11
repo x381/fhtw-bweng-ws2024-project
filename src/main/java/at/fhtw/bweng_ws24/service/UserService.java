@@ -11,6 +11,7 @@ import at.fhtw.bweng_ws24.mapper.UserMapper;
 import at.fhtw.bweng_ws24.model.User;
 import at.fhtw.bweng_ws24.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +26,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ResourceImageService resourceImageService;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, ResourceImageService resourceImageService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.resourceImageService = resourceImageService;
     }
 
     public List<UserResponseDto> getUsers() {
@@ -138,6 +141,12 @@ public class UserService {
     }
 
     public void deleteUser(UUID id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("User with id " + id + " not found.")
+        );
+        if (user.getImage() != null) {
+            resourceImageService.deleteResourceImage(UUID.fromString(user.getImage()));
+        }
         userRepository.deleteById(id);
     }
 }

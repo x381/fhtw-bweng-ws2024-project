@@ -8,6 +8,8 @@ import at.fhtw.bweng_ws24.model.User;
 import at.fhtw.bweng_ws24.repository.ResourceImageRepository;
 import at.fhtw.bweng_ws24.storage.FileStorage;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStream;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class ResourceImageService {
 
@@ -25,7 +28,7 @@ public class ResourceImageService {
     private final UserService userService;
     private final ProductService productService;
 
-    public ResourceImageService(ResourceImageRepository resourceImageRepository, FileStorage fileStorage, ResourceImageMapper resourceImageMapper, UserService userService, ProductService productService) {
+    public ResourceImageService(ResourceImageRepository resourceImageRepository, FileStorage fileStorage, ResourceImageMapper resourceImageMapper, @Lazy UserService userService, @Lazy ProductService productService) {
         this.resourceImageRepository = resourceImageRepository;
         this.fileStorage = fileStorage;
         this.resourceImageMapper = resourceImageMapper;
@@ -101,6 +104,12 @@ public class ResourceImageService {
             product.setImage(null);
             productService.saveProduct(product);
         }
+    }
+
+    public void deleteResourceImage(UUID id) {
+        ResourceImage resourceImage = findById(id);
+        fileStorage.delete(resourceImage.getExternalId());
+        resourceImageRepository.delete(resourceImage);
     }
 
     public ResourceImage findById(UUID id) {
