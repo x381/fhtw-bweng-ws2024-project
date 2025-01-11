@@ -14,10 +14,6 @@ public class PostProductDto {
     @Size(min = 3, max = 30, message = "Name must be between 3 and 30 characters")
     private String name;
 
-    // TODO
-//    @NotBlank
-//    private String imageUrl;
-
     private ProductCategory category;
 
     @NotBlank(message = "Description is mandatory")
