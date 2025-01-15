@@ -29,6 +29,12 @@ public class OrderService {
                 new IllegalArgumentException("Order not found for id: " + id));
     }
 
+    public List<Order> getOrdersByUserId(UUID createdBy) {
+        return orderRepository.findAll().stream()
+                .filter(order -> order.getCreatedBy().equals(createdBy))
+                .collect(Collectors.toList());
+    }
+
     public UUID createOrder(OrderDto orderDto) {
         Order order = new Order();
         order.setCustomerName(orderDto.getCustomerName());
