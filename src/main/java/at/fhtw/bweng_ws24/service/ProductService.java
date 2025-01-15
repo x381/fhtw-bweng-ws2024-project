@@ -2,6 +2,7 @@ package at.fhtw.bweng_ws24.service;
 
 import at.fhtw.bweng_ws24.dto.PostProductDto;
 import at.fhtw.bweng_ws24.dto.PutProductDto;
+import at.fhtw.bweng_ws24.exception.StockNotEnoughException;
 import at.fhtw.bweng_ws24.model.Product;
 import at.fhtw.bweng_ws24.model.ProductCategory;
 import at.fhtw.bweng_ws24.repository.ProductRepository;
@@ -75,5 +76,16 @@ public class ProductService {
 
     public List<Product> getProductsByCategory(ProductCategory category) {
         return productRepository.findByCategory(category);
+    }
+
+    public void updateStock(UUID productId, int quantity) {
+        Product product = productRepository.findById(productId).orElseThrow(
+                () -> new NoSuchElementException("Product with id " + productId + " not found.")
+        );
+        if (product.getStock() < quantity) {
+            throw new StockNotEnoughException("Not enough stock available for product with id " + productId);
+        }
+        product.setStock(product.getStock() - quantity);
+        productRepository.save(product);
     }
 }

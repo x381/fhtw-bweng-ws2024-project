@@ -5,6 +5,7 @@ import at.fhtw.bweng_ws24.model.Order;
 import at.fhtw.bweng_ws24.model.OrderItem;
 import at.fhtw.bweng_ws24.model.OrderStatus;
 import at.fhtw.bweng_ws24.repository.OrderRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,9 +15,11 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
 
+    private final ProductService productService;
     private final OrderRepository orderRepository;
 
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(ProductService productService, OrderRepository orderRepository) {
+        this.productService = productService;
         this.orderRepository = orderRepository;
     }
 
@@ -35,6 +38,7 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public UUID createOrder(OrderDto orderDto) {
         Order order = new Order();
         order.setCustomerName(orderDto.getCustomerName());
@@ -48,6 +52,10 @@ public class OrderService {
         order.setOrderItems(orderItems);
 
         Order savedOrder = orderRepository.save(order);
+        orderItems.forEach(orderItem -> {
+            productService.updateStock(UUID.fromString(orderItem.getProductId()), orderItem.getQuantity());
+        });
+
         return savedOrder.getId();
     }
 

@@ -2,6 +2,7 @@ package at.fhtw.bweng_ws24.config;
 
 import at.fhtw.bweng_ws24.exception.EmailExistsException;
 import at.fhtw.bweng_ws24.exception.PasswordWrongException;
+import at.fhtw.bweng_ws24.exception.StockNotEnoughException;
 import at.fhtw.bweng_ws24.exception.UsernameExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +50,7 @@ public class ExceptionHandling {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({EmailExistsException.class, UsernameExistsException.class, PasswordWrongException.class})
+    @ExceptionHandler({EmailExistsException.class, UsernameExistsException.class, PasswordWrongException.class, StockNotEnoughException.class})
     public ResponseEntity<?> handleCustomExceptions(Exception e, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), request.getDescription(false));
         errorDetails.addMessage("errors", e.getMessage());
