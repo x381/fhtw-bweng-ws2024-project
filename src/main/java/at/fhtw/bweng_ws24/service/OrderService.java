@@ -1,7 +1,6 @@
 package at.fhtw.bweng_ws24.service;
 
 import at.fhtw.bweng_ws24.dto.OrderDto;
-import at.fhtw.bweng_ws24.mapper.OrderMapper;
 import at.fhtw.bweng_ws24.model.Order;
 import at.fhtw.bweng_ws24.model.OrderItem;
 import at.fhtw.bweng_ws24.repository.OrderRepository;
@@ -44,7 +43,7 @@ public class OrderService {
         order.setCreatedBy(UUID.fromString(orderDto.getCreatedBy()));
 
         List<OrderItem> orderItems = orderDto.getOrderItems().stream()
-                .map(orderItemDto -> new OrderItem(null, orderItemDto.getProductId(), orderItemDto.getQuantity())).toList();
+                .map(orderItemDto -> new OrderItem(null, orderItemDto.getProductId(), orderItemDto.getProductName(), orderItemDto.getQuantity())).toList();
         order.setOrderItems(orderItems);
 
         Order savedOrder = orderRepository.save(order);

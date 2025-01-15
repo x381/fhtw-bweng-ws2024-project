@@ -10,6 +10,9 @@ public class OrderItemDto {
     @NotBlank(message = "Product ID is mandatory")
     private String productId;
 
+    @NotBlank(message = "Product name is mandatory")
+    private String productName;
+
     @Positive(message = "Quantity must be positive")
     private int quantity;
 }

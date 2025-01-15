@@ -54,7 +54,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.Order', 'delete')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#id, 'at.fhtw.bweng_ws24.model.User', 'delete'))")
     public ResponseEntity<Order> deleteOrder(@PathVariable UUID id) {
         orderService.deleteOrder(id);
         return ResponseEntity
