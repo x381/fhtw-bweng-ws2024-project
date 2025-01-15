@@ -36,7 +36,7 @@ public class OrderController {
     }
 
     @GetMapping("/user/{createdBy}")
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#createdBy, 'at.fhtw.bweng_ws24.model.Order', 'read'))")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasPermission(#createdBy, 'at.fhtw.bweng_ws24.model.User', 'read'))")
     public List<Order> getOrdersByCreatedBy(@PathVariable UUID createdBy) {
         return orderService.getOrdersByUserId(createdBy);
     }

@@ -1,7 +1,6 @@
 package at.fhtw.bweng_ws24.security;
 
 import at.fhtw.bweng_ws24.model.Order;
-import at.fhtw.bweng_ws24.model.Product;
 import at.fhtw.bweng_ws24.repository.OrderRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -19,7 +18,7 @@ public class OrderPermission implements AccessPermission {
 
     @Override
     public boolean supports(Authentication authentication, String className) {
-        return className.equals(Product.class.getName());
+        return className.equals(Order.class.getName());
     }
 
     @Override
