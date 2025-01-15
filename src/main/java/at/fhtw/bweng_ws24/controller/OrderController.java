@@ -61,4 +61,13 @@ public class OrderController {
                 .noContent()
                 .build();
     }
+
+    @PostMapping("/{orderId}/confirm")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Order> confirmOrder(@PathVariable UUID orderId) {
+        orderService.confirmOrder(orderId);
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
 }

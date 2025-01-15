@@ -3,6 +3,7 @@ package at.fhtw.bweng_ws24.service;
 import at.fhtw.bweng_ws24.dto.OrderDto;
 import at.fhtw.bweng_ws24.model.Order;
 import at.fhtw.bweng_ws24.model.OrderItem;
+import at.fhtw.bweng_ws24.model.OrderStatus;
 import at.fhtw.bweng_ws24.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 
@@ -55,5 +56,12 @@ public class OrderService {
             throw new IllegalArgumentException("Order not found for id: " + id);
         }
         orderRepository.deleteById(id);
+    }
+
+    public void confirmOrder(UUID orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() ->
+                new IllegalArgumentException("Order not found for id: " + orderId));
+        order.setStatus(OrderStatus.CONFIRMED);
+        orderRepository.save(order);
     }
 }
