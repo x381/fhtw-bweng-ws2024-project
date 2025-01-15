@@ -47,17 +47,6 @@ public class OrderController {
                 .body(response);
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.Order', 'update')")
-    public ResponseEntity<?> updateOrder(@PathVariable UUID id, @RequestBody @Valid OrderDto orderDto) {
-        orderService.updateOrder(id, orderDto);
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Order updated successfully");
-        return ResponseEntity
-                .ok()
-                .body(response);
-    }
-
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasPermission(#id, 'at.fhtw.bweng_ws24.model.Order', 'delete')")
     public ResponseEntity<Order> deleteOrder(@PathVariable UUID id) {

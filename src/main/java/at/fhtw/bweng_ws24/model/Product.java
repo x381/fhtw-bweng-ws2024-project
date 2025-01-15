@@ -20,6 +20,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(nullable = false)
     private String name;
 
     private String image;
@@ -27,13 +28,16 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductCategory category;
 
+    @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
     private UUID createdBy;
 
+    @Column(nullable = false)
     private UUID lastUpdatedBy;
 
-    private int stock = 0;
+    private int stock = 100;
 
     private double price;
 

@@ -33,8 +33,11 @@ public class Order {
     @Column(nullable = false)
     private Float totalAmount;
 
+    @Column(nullable = false)
+    private UUID createdBy;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "order_id") // Foreign key reference to orders table
+    @JoinColumn(name = "order_id")
     private List<OrderItem> orderItems;
 
     @CreationTimestamp

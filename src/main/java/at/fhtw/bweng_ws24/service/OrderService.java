@@ -21,7 +21,7 @@ public class OrderService {
     }
 
     public List<Order> getOrders() {
-        return orderRepository.findAll(); // Assumes `OrderRepository` extends `JpaRepository`
+        return orderRepository.findAll();
     }
 
     public Order getOrder(UUID id) {
@@ -34,34 +34,15 @@ public class OrderService {
         order.setCustomerName(orderDto.getCustomerName());
         order.setCustomerEmail(orderDto.getCustomerEmail());
         order.setAddress(orderDto.getAddress());
-        order.setTotalAmount((float) orderDto.getTotalAmount()); // Explicit conversion to match `Float`
+        order.setTotalAmount((float) orderDto.getTotalPrice());
+        order.setCreatedBy(UUID.fromString(orderDto.getCreatedBy()));
 
-        // Convert List<String> (order items) to List<OrderItem>
         List<OrderItem> orderItems = orderDto.getOrderItems().stream()
-                .map(productId -> new OrderItem(null, productId, 1)) // Default quantity is 1
-                .collect(Collectors.toList());
+                .map(orderItemDto -> new OrderItem(null, orderItemDto.getProductId(), orderItemDto.getQuantity())).toList();
         order.setOrderItems(orderItems);
 
         Order savedOrder = orderRepository.save(order);
         return savedOrder.getId();
-    }
-
-    public void updateOrder(UUID id, OrderDto orderDto) {
-        Order existingOrder = orderRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("Order not found for id: " + id));
-
-        existingOrder.setCustomerName(orderDto.getCustomerName());
-        existingOrder.setCustomerEmail(orderDto.getCustomerEmail());
-        existingOrder.setAddress(orderDto.getAddress());
-        existingOrder.setTotalAmount((float) orderDto.getTotalAmount()); // Explicit conversion to match `Float`
-
-        // Convert List<String> (order items) to List<OrderItem>
-        List<OrderItem> orderItems = orderDto.getOrderItems().stream()
-                .map(productId -> new OrderItem(null, productId, 1)) // Default quantity is 1
-                .collect(Collectors.toList());
-        existingOrder.setOrderItems(orderItems);
-
-        orderRepository.save(existingOrder);
     }
 
     public void deleteOrder(UUID id) {

@@ -13,7 +13,7 @@ public class PostUserDto {
 
     private UserGender userGender;
 
-    @Size(  max = 30, message = "Other specify must be less than 30 characters")
+    @Size(max = 30, message = "Other specify must be less than 30 characters")
     private String otherSpecify;
 
     @AssertTrue(message = "Other specify is mandatory only if userGender is OTHER")
