@@ -22,14 +22,14 @@ import java.util.NoSuchElementException;
 public class ExceptionHandling {
 
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<?> handleNoSuchElementException(NoSuchElementException e, WebRequest request) {
+    public ResponseEntity<Object> handleNoSuchElementException(NoSuchElementException e, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), request.getDescription(false));
         errorDetails.addMessage("errors", e.getMessage());
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidationExceptions(
+    public ResponseEntity<Object> handleValidationExceptions(
             MethodArgumentNotValidException ex, WebRequest request) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
@@ -43,7 +43,7 @@ public class ExceptionHandling {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<?> handleHttpMessageNotReadableException(
+    public ResponseEntity<Object> handleHttpMessageNotReadableException(
             HttpMessageNotReadableException e, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), request.getDescription(false));
         errorDetails.addMessage("errors", e.getMessage());
@@ -51,7 +51,7 @@ public class ExceptionHandling {
     }
 
     @ExceptionHandler({EmailExistsException.class, UsernameExistsException.class, PasswordWrongException.class, StockNotEnoughException.class})
-    public ResponseEntity<?> handleCustomExceptions(Exception e, WebRequest request) {
+    public ResponseEntity<Object> handleCustomExceptions(Exception e, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(new Date(), request.getDescription(false));
         errorDetails.addMessage("errors", e.getMessage());
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
