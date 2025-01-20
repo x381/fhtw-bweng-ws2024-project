@@ -7,6 +7,7 @@ import at.fhtw.bweng_ws24.model.ResourceImage;
 import at.fhtw.bweng_ws24.model.User;
 import at.fhtw.bweng_ws24.repository.ResourceImageRepository;
 import at.fhtw.bweng_ws24.storage.FileStorage;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +18,6 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.persistence.EntityNotFoundException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Optional;
@@ -60,10 +60,6 @@ class ResourceImageServiceTest {
         productId = UUID.randomUUID();
         imageId = UUID.randomUUID();
 
-        multipartFile = mock(MultipartFile.class);
-        when(multipartFile.getContentType()).thenReturn("image/jpeg");
-        when(multipartFile.getOriginalFilename()).thenReturn("test-image.jpg");
-
         resourceImage = new ResourceImage();
         resourceImage.setId(imageId);
         resourceImage.setExternalId("externalId");
@@ -85,11 +81,16 @@ class ResourceImageServiceTest {
     @Test
     void uploadProfilePicture_shouldUploadAndReturnResourceImageDto() {
         // Arrange
+        ResourceImageDto savedResourceImageDto = new ResourceImageDto();
+        savedResourceImageDto.setId(UUID.fromString("4c1ce0e1-de21-4b1e-8ff7-e3fa37bdb239"));
         User user = new User();
+        multipartFile = mock(MultipartFile.class);
+        when(multipartFile.getContentType()).thenReturn("image/jpeg");
+        when(multipartFile.getOriginalFilename()).thenReturn("test-image.jpg");
         when(userService.getUser(userId)).thenReturn(user);
         when(fileStorage.upload(multipartFile)).thenReturn("externalId");
         when(resourceImageRepository.save(any(ResourceImage.class))).thenReturn(resourceImage);
-        when(resourceImageMapper.toDto(resourceImage)).thenReturn(new ResourceImageDto());
+        when(resourceImageMapper.toDto(resourceImage)).thenReturn(savedResourceImageDto);
 
         // Act
         ResourceImageDto result = resourceImageService.uploadProfilePicture(userId, multipartFile);
@@ -102,13 +103,46 @@ class ResourceImageServiceTest {
     }
 
     @Test
+    void uploadProfilePicture_shouldUploadAndReturnResourceImageDtoAndDeleteOldPicture() {
+        // Arrange
+        ResourceImageDto savedResourceImageDto = new ResourceImageDto();
+        savedResourceImageDto.setId(UUID.fromString("4c1ce0e1-de21-4b1e-8ff7-e3fa37bdb239"));
+        User user = new User();
+        user.setImage(imageId.toString());
+        multipartFile = mock(MultipartFile.class);
+        when(multipartFile.getContentType()).thenReturn("image/jpeg");
+        when(multipartFile.getOriginalFilename()).thenReturn("test-image.jpg");
+        when(userService.getUser(userId)).thenReturn(user);
+        when(fileStorage.upload(multipartFile)).thenReturn("externalId");
+        when(resourceImageRepository.save(any(ResourceImage.class))).thenReturn(resourceImage);
+        when(resourceImageMapper.toDto(resourceImage)).thenReturn(savedResourceImageDto);
+        when(resourceImageRepository.findById(imageId)).thenReturn(Optional.of(resourceImage));
+
+        // Act
+        ResourceImageDto result = resourceImageService.uploadProfilePicture(userId, multipartFile);
+
+        // Assert
+        assertNotNull(result);
+        verify(fileStorage, times(1)).upload(multipartFile);
+        verify(resourceImageRepository, times(1)).save(any(ResourceImage.class));
+        verify(userService, times(1)).saveUser(user);
+        verify(fileStorage, times(1)).delete(resourceImage.getExternalId());
+        verify(resourceImageRepository, times(1)).delete(resourceImage);
+    }
+
+    @Test
     void uploadProductPicture_shouldUploadAndReturnResourceImageDto() {
         // Arrange
+        ResourceImageDto savedResourceImageDto = new ResourceImageDto();
+        savedResourceImageDto.setId(UUID.fromString("4c1ce0e1-de21-4b1e-8ff7-e3fa37bdb239"));
         Product product = new Product();
+        multipartFile = mock(MultipartFile.class);
+        when(multipartFile.getContentType()).thenReturn("image/jpeg");
+        when(multipartFile.getOriginalFilename()).thenReturn("test-image.jpg");
         when(productService.getProduct(productId)).thenReturn(product);
         when(fileStorage.upload(multipartFile)).thenReturn("externalId");
         when(resourceImageRepository.save(any(ResourceImage.class))).thenReturn(resourceImage);
-        when(resourceImageMapper.toDto(resourceImage)).thenReturn(new ResourceImageDto());
+        when(resourceImageMapper.toDto(resourceImage)).thenReturn(savedResourceImageDto);
 
         // Act
         ResourceImageDto result = resourceImageService.uploadProductPicture(productId, multipartFile);
@@ -118,6 +152,34 @@ class ResourceImageServiceTest {
         verify(fileStorage, times(1)).upload(multipartFile);
         verify(resourceImageRepository, times(1)).save(any(ResourceImage.class));
         verify(productService, times(1)).saveProduct(product);
+    }
+
+    @Test
+    void uploadProductPicture_shouldUploadAndReturnResourceImageDtoAndDeleteOldPicture() {
+        // Arrange
+        ResourceImageDto savedResourceImageDto = new ResourceImageDto();
+        savedResourceImageDto.setId(UUID.fromString("4c1ce0e1-de21-4b1e-8ff7-e3fa37bdb239"));
+        Product product = new Product();
+        product.setImage(imageId.toString());
+        multipartFile = mock(MultipartFile.class);
+        when(multipartFile.getContentType()).thenReturn("image/jpeg");
+        when(multipartFile.getOriginalFilename()).thenReturn("test-image.jpg");
+        when(productService.getProduct(productId)).thenReturn(product);
+        when(fileStorage.upload(multipartFile)).thenReturn("externalId");
+        when(resourceImageRepository.save(any(ResourceImage.class))).thenReturn(resourceImage);
+        when(resourceImageMapper.toDto(resourceImage)).thenReturn(savedResourceImageDto);
+        when(resourceImageRepository.findById(imageId)).thenReturn(Optional.of(resourceImage));
+
+        // Act
+        ResourceImageDto result = resourceImageService.uploadProductPicture(productId, multipartFile);
+
+        // Assert
+        assertNotNull(result);
+        verify(fileStorage, times(1)).upload(multipartFile);
+        verify(resourceImageRepository, times(1)).save(any(ResourceImage.class));
+        verify(productService, times(1)).saveProduct(product);
+        verify(fileStorage, times(1)).delete(resourceImage.getExternalId());
+        verify(resourceImageRepository, times(1)).delete(resourceImage);
     }
 
     @Test

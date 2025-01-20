@@ -12,11 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -92,6 +88,26 @@ public class ProductServiceTest {
     }
 
     @Test
+    void getProductsByCreatedBy_shouldReturnListOfProducts() {
+        // Arrange
+        UUID createdBy = UUID.randomUUID();
+        List<Product> products = Arrays.asList(
+                new Product(UUID.randomUUID(), "Laptop", null, ProductCategory.ELECTRONIC_DEVICES, "High-performance laptop", createdBy, UUID.randomUUID(), 100, 1200.0, null, null),
+                new Product(UUID.randomUUID(), "Vacuum Cleaner", null, ProductCategory.HOUSEHOLD_STUFF, "A powerful vacuum cleaner", createdBy, UUID.randomUUID(), 50, 200.0, null, null)
+        );
+        when(productRepository.findByCreatedBy(createdBy)).thenReturn(products);
+
+        // Act
+        List<Product> result = productService.getProductsByCreatedBy(createdBy);
+
+        // Assert
+        assertEquals(2, result.size());
+        assertEquals("Laptop", result.get(0).getName());
+        assertEquals(ProductCategory.ELECTRONIC_DEVICES, result.get(0).getCategory());
+        verify(productRepository, times(1)).findByCreatedBy(createdBy);
+    }
+
+    @Test
     void getProduct_shouldThrowExceptionIfNotFound() {
         // Arrange
         UUID productId = UUID.randomUUID();
@@ -136,7 +152,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    void deleteProduct_shouldDeleteExistingProduct() {
+    void deleteProduct_shouldDeleteExistingProductWithAnImage() {
         // Arrange
         UUID productId = UUID.randomUUID();
         Product product = new Product(productId, "Laptop", UUID.randomUUID().toString(), ProductCategory.ELECTRONIC_DEVICES, "High-performance laptop", UUID.randomUUID(), UUID.randomUUID(), 100, 1200.0, null, null);
@@ -147,6 +163,21 @@ public class ProductServiceTest {
 
         // Assert
         verify(resourceImageService, times(1)).deleteResourceImage(any(UUID.class));
+        verify(productRepository, times(1)).deleteById(productId);
+    }
+
+    @Test
+    void deleteProduct_shouldDeleteExistingProductWithoutAnImage() {
+        // Arrange
+        UUID productId = UUID.randomUUID();
+        Product product = new Product(productId, "Laptop", null, ProductCategory.ELECTRONIC_DEVICES, "High-performance laptop", UUID.randomUUID(), UUID.randomUUID(), 100, 1200.0, null, null);
+        when(productRepository.findById(productId)).thenReturn(Optional.of(product));
+
+        // Act
+        productService.deleteProduct(productId);
+
+        // Assert
+        verify(resourceImageService, never()).deleteResourceImage(any(UUID.class));
         verify(productRepository, times(1)).deleteById(productId);
     }
 
@@ -162,6 +193,26 @@ public class ProductServiceTest {
     }
 
     @Test
+    void testGetProductsByCategory() {
+        // Arrange
+        ProductCategory category = ProductCategory.ELECTRONIC_DEVICES;
+        List<Product> products = Arrays.asList(
+                new Product(UUID.randomUUID(), "Laptop", null, category, "High-performance laptop", UUID.randomUUID(), UUID.randomUUID(), 100, 1200.0, null, null),
+                new Product(UUID.randomUUID(), "Smartphone", null, category, "A powerful smartphone", UUID.randomUUID(), UUID.randomUUID(), 50, 800.0, null, null)
+        );
+        when(productRepository.findByCategory(category)).thenReturn(products);
+
+        // Act
+        List<Product> result = productService.getProductsByCategory(category);
+
+        // Assert
+        assertEquals(2, result.size());
+        assertEquals("Laptop", result.get(0).getName());
+        assertTrue(result.stream().allMatch(p -> p.getCategory().equals(category)));
+        verify(productRepository, times(1)).findByCategory(category);
+    }
+
+    @Test
     void updateStock_shouldUpdateStockSuccessfully() {
         // Arrange
         UUID productId = UUID.randomUUID();
@@ -174,6 +225,16 @@ public class ProductServiceTest {
         // Assert
         assertEquals(90, product.getStock());
         verify(productRepository, times(1)).save(product);
+    }
+
+    @Test
+    void updateStock_shouldThrowExceptionIfProductNotFound() {
+        // Arrange
+        UUID productId = UUID.randomUUID();
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NoSuchElementException.class, () -> productService.updateStock(productId, 10));
     }
 
     @Test

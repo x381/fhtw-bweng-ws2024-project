@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.UUID;
@@ -40,7 +39,7 @@ class AuthServiceTest {
     private AuthService authService;
 
     @Test
-    void authenticate_shouldIssueToken() {
+    void testAuthenticate_shouldIssueToken() {
         // Arrange
         TokenRequestDto tokenRequestDto = new TokenRequestDto();
         tokenRequestDto.setUsernameOrEmail("testUser");
@@ -71,7 +70,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void authenticate_shouldThrowExceptionWhenUserNotFound() {
+    void testAuthenticate_shouldThrowExceptionWhenUserNotFound() {
         // Arrange
         TokenRequestDto tokenRequestDto = new TokenRequestDto();
         tokenRequestDto.setUsernameOrEmail("nonExistentUser");
@@ -87,7 +86,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void authenticate_shouldThrowExceptionWhenAuthenticationFails() {
+    void testAuthenticate_shouldThrowExceptionWhenAuthenticationFails() {
         // Arrange
         TokenRequestDto tokenRequestDto = new TokenRequestDto();
         tokenRequestDto.setUsernameOrEmail("testUser");

@@ -13,7 +13,6 @@ import at.fhtw.bweng_ws24.model.UserGender;
 import at.fhtw.bweng_ws24.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -88,6 +87,15 @@ class UserServiceTest {
     }
 
     @Test
+    void testGetUserResponseDto_ThrowException_WhenUserNotFound() {
+        // Arrange
+        when(userRepository.findById(sampleUserId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NoSuchElementException.class, () -> userService.getUserResponseDto(sampleUserId));
+    }
+
+    @Test
     void testGetUser_ThrowsException_WhenUserNotFound() {
         // Arrange
         when(userRepository.findById(sampleUserId)).thenReturn(Optional.empty());
@@ -135,6 +143,18 @@ class UserServiceTest {
     }
 
     @Test
+    void testCreateUser_ThrowsException_WhenUsernameExists() {
+        // Arrange
+        PostUserDto postUserDto = new PostUserDto();
+        postUserDto.setUsername("testUser");
+
+        when(userRepository.findByUsername(postUserDto.getUsername())).thenReturn(new User());
+
+        // Act & Assert
+        assertThrows(UsernameExistsException.class, () -> userService.createUser(postUserDto));
+    }
+
+    @Test
     void testUpdateUser_ThrowsException_WhenUserNotFound() {
         // Arrange
         PutUserDto putUserDto = new PutUserDto();
@@ -150,6 +170,7 @@ class UserServiceTest {
         PutUserDto putUserDto = new PutUserDto();
         putUserDto.setUsername("newUsername");
         putUserDto.setEmail("newEmail@example.com");
+        putUserDto.setLastUpdatedBy(String.valueOf(sampleUserId));
 
         User existingUser = new User();
         existingUser.setId(sampleUserId);
@@ -166,6 +187,66 @@ class UserServiceTest {
         // Assert
         assertEquals("newUsername", existingUser.getUsername());
         assertEquals("newEmail@example.com", existingUser.getEmail());
+        verify(userRepository, times(1)).save(existingUser);
+    }
+
+    @Test
+    void testUpdateUser_ThrowsException_WhenEmailExists() {
+        // Arrange
+        PutUserDto putUserDto = new PutUserDto();
+        putUserDto.setEmail("existingEmail@example.com");
+        putUserDto.setLastUpdatedBy(String.valueOf(sampleUserId));
+
+        User existingUser = new User();
+        existingUser.setId(sampleUserId);
+        existingUser.setEmail("email@example.com");
+
+        when(userRepository.findById(sampleUserId)).thenReturn(Optional.of(existingUser));
+        when(userRepository.findByEmail(putUserDto.getEmail())).thenReturn(new User());
+
+        // Act & Assert
+        assertThrows(EmailExistsException.class, () -> userService.updateUser(sampleUserId, putUserDto));
+    }
+
+    @Test
+    void testUpdateUser_ThrowsException_WhenUsernameExists() {
+        // Arrange
+        PutUserDto putUserDto = new PutUserDto();
+        putUserDto.setUsername("existingUsername");
+        putUserDto.setLastUpdatedBy(String.valueOf(sampleUserId));
+
+        User existingUser = new User();
+        existingUser.setId(sampleUserId);
+        existingUser.setUsername("username");
+
+        when(userRepository.findById(sampleUserId)).thenReturn(Optional.of(existingUser));
+        when(userRepository.findByUsername(putUserDto.getUsername())).thenReturn(new User());
+
+        // Act & Assert
+        assertThrows(UsernameExistsException.class, () -> userService.updateUser(sampleUserId, putUserDto));
+    }
+
+    @Test
+    void testUpdateUserPassword() {
+        // Arrange
+        PutUserPasswordDto passwordDto = new PutUserPasswordDto();
+        passwordDto.setActualPassword("oldPassword");
+        passwordDto.setNewPassword("New@Password123");
+        passwordDto.setLastUpdatedBy(String.valueOf(sampleUserId));
+
+
+        User existingUser = new User();
+        existingUser.setPassword("encodedPassword");
+
+        when(userRepository.findById(sampleUserId)).thenReturn(Optional.of(existingUser));
+        when(passwordEncoder.matches(passwordDto.getActualPassword(), existingUser.getPassword())).thenReturn(true);
+        when(passwordEncoder.encode(passwordDto.getNewPassword())).thenReturn("encodedNewPassword");
+
+        // Act
+        userService.updateUserPassword(sampleUserId, passwordDto);
+
+        // Assert
+        assertEquals("encodedNewPassword", existingUser.getPassword());
         verify(userRepository, times(1)).save(existingUser);
     }
 
@@ -187,11 +268,21 @@ class UserServiceTest {
     }
 
     @Test
-    void testDeleteUser_Successful() {
+    void testUpdateUserPassword_ThrowsException_WhenUserNotFound() {
+        // Arrange
+        PutUserPasswordDto passwordDto = new PutUserPasswordDto();
+        when(userRepository.findById(sampleUserId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NoSuchElementException.class, () -> userService.updateUserPassword(sampleUserId, passwordDto));
+    }
+
+    @Test
+    void testDeleteUser_SuccessfulWithImage() {
         // Arrange
         User user = new User();
         user.setId(sampleUserId);
-        user.setImage("imageId");
+        user.setImage("a051b327-3bac-4d7d-8155-be6340874d96");
 
         when(userRepository.findById(sampleUserId)).thenReturn(Optional.of(user));
 
@@ -199,7 +290,32 @@ class UserServiceTest {
         userService.deleteUser(sampleUserId);
 
         // Assert
-        verify(resourceImageService, times(1)).deleteResourceImage(UUID.fromString("imageId"));
+        verify(resourceImageService, times(1)).deleteResourceImage(UUID.fromString("a051b327-3bac-4d7d-8155-be6340874d96"));
         verify(userRepository, times(1)).deleteById(sampleUserId);
+    }
+
+    @Test
+    void testDeleteUser_SuccessfulWithoutImage() {
+        // Arrange
+        User user = new User();
+        user.setId(sampleUserId);
+
+        when(userRepository.findById(sampleUserId)).thenReturn(Optional.of(user));
+
+        // Act
+        userService.deleteUser(sampleUserId);
+
+        // Assert
+        verify(resourceImageService, never()).deleteResourceImage(any(UUID.class));
+        verify(userRepository, times(1)).deleteById(sampleUserId);
+    }
+
+    @Test
+    void testDeleteUser_ThrowsException_WhenUserNotFound() {
+        // Arrange
+        when(userRepository.findById(sampleUserId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NoSuchElementException.class, () -> userService.deleteUser(sampleUserId));
     }
 }

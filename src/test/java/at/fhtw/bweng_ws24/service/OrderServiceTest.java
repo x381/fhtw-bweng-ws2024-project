@@ -3,7 +3,6 @@ package at.fhtw.bweng_ws24.service;
 import at.fhtw.bweng_ws24.dto.OrderDto;
 import at.fhtw.bweng_ws24.dto.OrderItemDto;
 import at.fhtw.bweng_ws24.model.Order;
-import at.fhtw.bweng_ws24.model.OrderItem;
 import at.fhtw.bweng_ws24.model.OrderStatus;
 import at.fhtw.bweng_ws24.repository.OrderRepository;
 import org.junit.jupiter.api.Test;
@@ -12,11 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -69,6 +64,24 @@ public class OrderServiceTest {
     }
 
     @Test
+    void getOrdersByUserId_shouldReturnOrdersCreatedByUser() {
+        // Arrange
+        UUID userId = UUID.randomUUID();
+        List<Order> expectedOrders = Arrays.asList(
+                new Order(UUID.randomUUID(), "John Doe", "john.doe@example.com", "123 Street, City", 100.0f, userId, new ArrayList<>(), OrderStatus.PENDING, null),
+                new Order(UUID.randomUUID(), "Jane Smith", "jane.smith@example.com", "456 Avenue, City", 200.0f, userId, new ArrayList<>(), OrderStatus.PENDING, null)
+        );
+
+        when(orderRepository.findAll()).thenReturn(expectedOrders);
+
+        // Act
+        List<Order> actualOrders = orderService.getOrdersByUserId(userId);
+
+        // Assert
+        assertEquals(expectedOrders.size(), actualOrders.size());
+    }
+
+    @Test
     void getOrder_shouldThrowExceptionWhenOrderNotFound() {
         // Arrange
         UUID orderId = UUID.randomUUID();
@@ -83,7 +96,7 @@ public class OrderServiceTest {
     void createOrder_shouldSaveOrderAndUpdateStock() {
         // Arrange
         OrderItemDto orderItemDto = new OrderItemDto();
-        orderItemDto.setProductId("product-id");
+        orderItemDto.setProductId("a08193ce-9023-4846-a6ff-c2fb9d90476c");
         orderItemDto.setProductName("Product Name");
         orderItemDto.setQuantity(2);
         List<OrderItemDto> orderItemsDto = List.of(orderItemDto);
