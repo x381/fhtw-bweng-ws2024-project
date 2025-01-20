@@ -33,7 +33,7 @@ public class PutUserDto {
     private String email;
 
     @NotBlank(message = "Country is mandatory")
-    @Size(min = 3, max = 30, message = "Country must be between 3 and 30 characters")
+    @Size(min = 2, max = 30, message = "Country must be between 3 and 30 characters")
     private String country;
 
     @Size(min = 2, max = 30, message = "City must be between 2 and 30 characters")
